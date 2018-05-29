@@ -23,7 +23,7 @@ const User = require('./src/user/user');
 
 // ejs 템플릿
 // 확장자가 ejs 로 끈나는 뷰 엔진을 추가한다.
-app.set('views', path.join(__dirname, 'src/views'));
+app.set('views', path.join(__dirname, './views'));
 app.set('view engine', 'ejs');
 
 // 미들웨어 셋팅
@@ -31,6 +31,37 @@ app.use(morgan('dev'));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
+
+// session 관련 셋팅
+const connectMongo = require('connect-mongo');
+const MongoStore = connectMongo(session);
+
+const sessionMiddleWare = session({
+  secret: process.env.SECRET,
+  resave: false,
+  saveUninitialized: true,
+  cookie: {
+    secure: false,
+    maxAge: 2000 * 60 * 60 //지속시간 2시간
+  },
+  store: new MongoStore({
+    mongooseConnection: mongoose.connection,
+    ttl: 14 * 24 * 60 * 60
+  })
+})
+
+app.use(sessionMiddleWare);
+
+// Passport
+app.use(passport.initialize());
+app.use(passport.session());
+
+// 로그인정보를 뷰에서만 변수로 셋팅
+app.use((req, res, next) => {
+  app.locals.isLogin = req.isAuthenticated();
+  app.locals.userData = req.user;
+  next()
+})
 
 app.use('/user', User);
 
