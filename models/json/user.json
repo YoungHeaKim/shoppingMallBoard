@@ -1,0 +1,32 @@
+{
+  "email": {
+    "type": "String",
+    "required": [
+      "true",
+      "아이디는 필수입니다."
+    ],
+    "trim": "true",
+    "unique": "true",
+    "lowercase": "true"
+  },
+  "password": {
+    "type": "String",
+    "required": [
+      "true",
+      "패스워드는 필수입니다."
+    ],
+    "trim": "true"
+  },
+  "name": {
+    "type": "String",
+    "required": "true"
+  },
+  "nickname": {
+    "type": "String",
+    "required": "true",
+    "unique": "true"
+  },
+  "admin": {
+    "type": "Boolean"
+  }
+}
