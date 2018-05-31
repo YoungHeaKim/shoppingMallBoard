@@ -1,9 +1,9 @@
-const User = require('../models/user');
+const User = require('../../models/user');
 
 module.exports = {
-  checkIdExist(email) {
+  checkIdExist(username) {
     return User.findOne({
-      email: email
+      username: username
     });
   },
   checkNicknameExist(nickname) {
@@ -13,13 +13,20 @@ module.exports = {
   },
   createUser(data) {
     return User.create({
-      email: data.email,
+      username: data.username,
       password: data.password,
-      name: data.name,
-      nickname: data.nickname
+      nickname: data.nickname,
+      admin : data.admin,
     })
   },
   checkUserBy_id(data) {
     return User.findById(data)
+  },
+  updateUser(id, data) {
+    return User.findByIdAndUpdate(id, {
+      username: data.username,
+      password: data.password,
+      nickname: data.nickname
+    })
   },
 }
