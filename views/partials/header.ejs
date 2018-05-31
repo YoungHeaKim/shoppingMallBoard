@@ -27,18 +27,27 @@
             <span class="icon-bar"></span>
             <span class="icon-bar"></span>
           </button>
-          <a href="/article/lists" class="navbar-brand">ShoppingMallBoard</a>
+          <a href="/" class="navbar-brand">지그재그</a>
         </div>
         <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-9">
           <ul class="nav navbar-nav">
-            <li>
-              <a href="/article/list">List</a>
-            </li>
             <% if(isLogin) { %>
+              <li><a href="/user/edit">유저 수정</a></li>
               <li><a href="/user/logout" onclick="return confirm('로그아웃 하시겠습니까?')">LogOut</a></li>
+              <% if (userData.admin === true ) { %>
+              <li>
+                <a href="/">ShoppingMall List</a>
+              </li>
+              <li>
+                <a href="/admin">Admin</a>
+              </li>
+              <% } %>
             <% } else { %>
               <li><a href="/user/login">LogIn</a></li>
-              <li><a href="/user/register">회원가입</a></li>
+              <!-- <li><a href="/user/admin/join">admin 회원가입</a></li> -->
+              <li>
+                <a href="/user/join">회원가입</a>
+              </li>
             <% } %>
           </ul>
         </div>
