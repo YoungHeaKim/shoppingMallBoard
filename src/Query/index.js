@@ -1,7 +1,7 @@
 const { ...AuthQuery } = require('./AuthQuery');
-const { ...ShoppingmallQuery } = require('./Shoppingmall');
+const { ...ArticleQuery } = require('./ArticleQuery');
 
 module.exports = {
   ...AuthQuery,
-  ...ShoppingmallQuery,
+  ...ArticleQuery,
 };
