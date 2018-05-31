@@ -20,6 +20,10 @@ global.db = mongoose.createConnection(process.env.MONGO_URI);
 const server = http.Server(app);
 // user 부분
 const User = require('./src/user/user');
+// article 부분
+const Article = require('./src/article/article');
+// login - checker
+const checker = require('./src/user/user.access.controller')
 
 // ejs 템플릿
 // 확장자가 ejs 로 끈나는 뷰 엔진을 추가한다.
@@ -64,6 +68,7 @@ app.use((req, res, next) => {
 })
 
 app.use('/user', User);
+app.use('/', checker.accessChecker, Article);
 
 mongoose.connect(process.env.MONGO_URI)
   .then(() => console.log('Successfully connected to mongodb'))
