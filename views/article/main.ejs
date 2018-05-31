@@ -1,0 +1,30 @@
+<% include ../partials/header.ejs %>
+
+  <table class="table table-bordered table-hover">
+    <tr>
+      <th>메인사진</th>
+      <th>제목</th>
+      <th>작성일</th>    
+    </tr>
+    <% if(articleList == null || articleList.length == 0) { %>
+      <tr>
+        <td colspan=100>Article이 없습니다.</td>
+      </tr>
+    <% } %>
+    <% articleList.forEach( (article) => { %>
+      <tr>  
+        <td>
+          <%= article.thumbnail %>
+        </td>
+        <td><a href="/shoppingmall/<%= article._id %>"><%= article.title %></a></td>
+        <td>
+          <%= article.getDate.year %> -
+          <%= article.getDate.month %> -
+          <%= article.getDate.day %>
+        </td>
+      </tr>
+    <% }) %>
+  </table>
+
+
+  <% include ../partials/footer.ejs %>
