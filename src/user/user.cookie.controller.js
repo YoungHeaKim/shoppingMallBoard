@@ -41,12 +41,19 @@ exports.cookie = (req, res) => {
     if (!token) {
       return res.redirect('/user/login');
     }
-    req.logIn(user, (err) => {
+    req.logIn(user, async (err) => {
       if (err) {
         return res.send('<script>alert("로그인을 해주세요");location.href="/user/login";</script>');
       }
-      console.log('성공')
-      return res.cookie('auth', token, { expires: date }).send('<script>alert("로그인에 성공하였습니다.");location.href="/article/lists";</script>');
+      const checkAdmin = await query.checkUserBy_id(user)
+      if(checkAdmin.admin !== true){
+        const article = await  query.findArticleByTitle(user._id)
+        if(article === null) {
+          return res.cookie('auth', token, { expires: date }).send('<script>alert("로그인에 성공하였습니다.");location.href="/shoppingmall/register";</script>');          
+        }
+        return res.cookie('auth', token, { expires: date }).send('<script>alert("로그인에 성공하였습니다.");location.href="/shoppingmall";</script>');
+      }
+      return res.cookie('auth', token, { expires: date }).send('<script>alert("로그인에 성공하였습니다.");location.href="/";</script>');
     })
   })(req, res);
 };
