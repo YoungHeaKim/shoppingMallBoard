@@ -1,0 +1,11 @@
+{
+  "content" : {
+    "type" : "String"
+  },
+  "shoppingMall_id": {
+    "type": "String"
+  },
+  "writer" : {
+    "type": "String"
+  }
+}
