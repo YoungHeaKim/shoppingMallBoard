@@ -14,7 +14,6 @@ exports.createArticle = async (req, res) => {
   }
   const articleCreate = await query.createArticle(ArticleInfo);
   if (articleCreate) {
-    const article = await query.findArticleById(articleCreate._id);
     // return res.status(200).json('글 등록 성공')
     return res.status(200).send('<script>alert("게시글 등록에 성공하였습니다.");location.href="/shoppingmall";</script>')
   }

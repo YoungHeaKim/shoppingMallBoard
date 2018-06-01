@@ -2,7 +2,7 @@
 
 <div class="panel panel-default">
   <div class="panel-heading">
-    <%= title%>
+    <%= user.nickname %>
     <div style="float: right;">
        작성일 : 
        <% if(article.createdAt === article.updatedAt) { %>
@@ -28,11 +28,113 @@
 
       <%- article.content %>
     </div>
+    <!-- 요청사항 영역  -->
+    
+    <hr />
+    <div>
+      <table class="table" id="comment_area">
+        <tr>
+          <th>요청 내용</th>
+          <th>작성자</th>
+          <th>작성일</th>
+          <th>삭제 여부 밑 댓글달기</th>          
+        </tr>
+        <% if(comments == null || comments.length == 0) { %>
+          <tr>
+            <td colspan=100>요청사항이 없습니다.</td>
+          </tr>
+        <% } %>
+        <% comments.forEach( function(comment){ %>
+          <tr>
+            <td>
+              <%= comment.content %>
+            </td>
+            <td>
+              <%= comment.writer %>
+            </td>
+            <td>
+              <%= comment.getDate.year %> -
+              <%= comment.getDate.month %> -
+              <%= comment.getDate.day %>
+            </td>
+            <td><a class='comment_delete' comment_id='<%=comment._id%>'>삭제</a>
+            </td>
+          </tr>
+        <% }) %>
+      </table>
+    </div>
+
+    <!-- 요청사항 영역  -->
+    <div>
+      요청사항 작성하기
+      <form id="commentForm" action="" method="post">
+        <input type="hidden" name="shoppingMall_id" value="<%=article._id%>" />
+        <textarea class="form-control" name="content"></textarea>
+        <button class="btn btn-primary" style="margin-top: 10px">요청사항 작성</button>
+      </form>
+    </div>
+    <!-- 요청사항 영역  -->
+
   </div>
-  <a href="/shoppingmall/delete/<%= article._id %>" class="btn btn-danger" onclick="return confirm('삭제하시겠습니까?')">삭제</a>
-  <%if(article.title === userData._id) { %>
+
+  <a href="/delete/<%= article._id %>" class="btn btn-danger" onclick="return confirm('삭제하시겠습니까?')">삭제</a>
+  <%if(article.title === user._id) { %>
     <a href="/shoppingmall/edit/<%= article._id %>" class="btn btn-primary">수정</a>
   <% } %>
 </div>
+<script type="text/javascript" src="https://code.jquery.com/jquery-2.2.4.min.js"></script>
+
+<script>
+  $(document).ready(function () {
+    $('#commentForm').submit(function () {
+      let $contentVal = $(this).children('textarea[name=content]').val();
+      //alert($contentVal);
+      if ($contentVal) {
+        $.ajax({
+          url: '/shoppingmall/ajax_comment/insert',
+          type: 'POST',
+          data: $(this).serialize(),
+        })
+          .done(function (args) {
+            if (args.message === "success") {
+              $('#comment_area').append(
+                '<tr>' + '<td>' + args.content + '</td>' + '<td>' + args.writer + '</td>' + '<td>' + args.getDate + '</td>' + "<td> <a class='comment_delete' comment_id='" +
+                args.id + "'>삭제</a> </td> </tr>"
+              );
+              $('#commentForm textarea[name=content]').val("");
+            }
+          })
+          .fail(function (args) {
+            console.log(args);
+          });
+
+      } else {
+        alert('댓글 내용을 입력해주세요.')
+      }
+
+
+      return false;
+    });
+
+    $(document).on('click', '.comment_delete', function () {
+      if (confirm('삭제하시겠습니까?')) { //확인창 예 눌렀을 시만 진행
+        let $self = $(this);
+        $.ajax({
+          url: '/shoppingmall/ajax_comment/delete',
+          type: 'POST',
+          data: { comment_id: $self.attr('comment_id') },
+        })
+          .done(function () {
+            $self.parent().remove();
+            alert("삭제가 완료되었습니다.");
+          })
+          .fail(function (args) {
+            console.log(args);
+          });
+      }
+    });
+  });
+
+</script>
 
 <% include ../partials/footer.ejs %>

@@ -23,7 +23,6 @@ exports.mainPage = async (req, res) => {
   
   // const pageCount = Math.ceil(itemCount / req.query.limit);
   
-
   // const pages = paginate.getArrayPages(req)(5, pageCount, req.query.page);
 
   res.status(200).render('article/main', {
@@ -44,11 +43,24 @@ exports.articlePage = async (req, res) => {
     console.log('게시글부분 오류')
     res.status(400).json('게시글이 없습니다.')
   }
+  const allComments = await query.findCommentsByShoppingMall_id(article._id);
+  let comments = []
+  for (let idx = 0; idx < allComments.length; idx++) {
+    const commentObj = {};
+    const User = await query.checkUserBy_id(allComments[idx].writer);
+    commentObj._id = allComments[idx]._id;
+    commentObj.writer = User.nickname;
+    commentObj.content = allComments[idx].content;
+    commentObj.getDate = allComments[idx].getDate;
+    commentObj.updatedDate = allComments[idx].updatedDate;
+    comments.push(commentObj);
+  }
   const user = await query.checkUserBy_id(article.title);
-  const title = user.nickname;
+
   res.status(200).render('article/show.ejs', {
     article: article,
-    title : title,
+    user : user,
+    comments: comments,
   });
 };
 
@@ -59,11 +71,24 @@ exports.articleAdminPage = async (req, res) => {
     console.log('게시글부분 오류')
     res.status(400).json('게시글이 없습니다.')
   }
+  const allComments = await query.findCommentsByShoppingMall_id(article._id);
+  let comments = []
+  for (let idx = 0; idx < allComments.length; idx++) {
+    const commentObj = {};
+    const User = await query.checkUserBy_id(allComments[idx].writer);
+    commentObj._id = allComments[idx]._id;
+    commentObj.writer = User.nickname;
+    commentObj.content = allComments[idx].content;
+    commentObj.getDate = allComments[idx].getDate;
+    commentObj.updatedDate = allComments[idx].updatedDate;
+    comments.push(commentObj);
+  }
+  
   const user = await query.checkUserBy_id(article.title);
-  const title = user.nickname;
   res.status(200).render('article/show.ejs', {
     article: article,
-    title: title,
+    user: user,
+    comments: comments,
   });
 };
 
@@ -82,18 +107,16 @@ exports.adminPage = async (req, res) => {
     articleObj.title = user.nickname;
     articleObj.getDate = results[idx].getDate;
     articleObj.updatedDate = results[idx].updatedDate;
-    articleObj.createdAt = results[idx].createdAt;
     articleList.push(articleObj);
   }
 
-  const pageCount = Math.ceil(itemCount / req.query.limit);
+  // const pageCount = Math.ceil(itemCount / req.query.limit);
 
-
-  const pages = paginate.getArrayPages(req)(5, pageCount, req.query.page);
+  // const pages = paginate.getArrayPages(req)(5, pageCount, req.query.page);
 
   res.status(200).render('article/main', {
     articleList: articleList,
-    pages: pages,
-    pageCount: pageCount,
+    // pages: pages,
+    // pageCount: pageCount,
   });
 };

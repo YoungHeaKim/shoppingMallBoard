@@ -22,6 +22,8 @@ const server = http.Server(app);
 const User = require('./src/user/user');
 // article 부분
 const Article = require('./src/article/article');
+// comments 부분
+const Comments = require('./src/comments/comments');
 // login - checker
 const checker = require('./src/user/user.access.controller')
 
@@ -68,7 +70,7 @@ app.use((req, res, next) => {
 })
 
 app.use('/user', User);
-app.use('/', checker.accessChecker, Article);
+app.use('/', checker.accessChecker, Article, Comments);
 
 mongoose.connect(process.env.MONGO_URI)
   .then(() => console.log('Successfully connected to mongodb'))
