@@ -16,6 +16,7 @@ module.exports = {
       username: data.username,
       password: data.password,
       nickname: data.nickname,
+      companyUrl: data.companyUrl,
       admin : data.admin,
     })
   },
