@@ -88,7 +88,6 @@
   $(document).ready(function () {
     $('#commentForm').submit(function () {
       let $contentVal = $(this).children('textarea[name=content]').val();
-      //alert($contentVal);
       if ($contentVal) {
         $.ajax({
           url: '/shoppingmall/ajax_comment/insert',
@@ -102,17 +101,15 @@
                 args.id + "'>삭제</a> </td> </tr>"
               );
               $('#commentForm textarea[name=content]').val("");
+              window.location.reload()
             }
           })
           .fail(function (args) {
             console.log(args);
           });
-
       } else {
-        alert('댓글 내용을 입력해주세요.')
+        alert('요청사항을 입력해주세요.')
       }
-
-
       return false;
     });
 
@@ -124,9 +121,12 @@
           type: 'POST',
           data: { comment_id: $self.attr('comment_id') },
         })
-          .done(function () {
-            $self.parent().remove();
-            alert("삭제가 완료되었습니다.");
+          .done(function (args) {
+            if(args.message === "success"){
+              $self.parent().remove();
+              window.location.reload();
+              alert("삭제가 완료되었습니다.");
+            }
           })
           .fail(function (args) {
             console.log(args);
