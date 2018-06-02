@@ -2,7 +2,9 @@
 
 <div class="panel panel-default">
   <div class="panel-heading">
-    <%= user.nickname %>
+    <a href='<%= user.companyUrl %>' target="_blank">
+      <%= user.nickname %>
+    </a>
     <div style="float: right;">
        작성일 : 
        <% if(article.createdAt === article.updatedAt) { %>
