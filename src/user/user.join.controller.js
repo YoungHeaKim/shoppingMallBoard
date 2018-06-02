@@ -17,6 +17,8 @@ exports.signUp = async (req, res) => {
     return res.status(400).json("확인 비밀번호를 입력해주세요");
   } else if (!req.body.nickname) {
     return res.status(400).json("회사명을 입력해주세요");
+  } else if (!req.body.companyUrl) {
+    return res.status(400).json("회사 홈페이지를 입력해주세요");
   } else if (req.body.password !== req.body.password2) {
     return res.status(400).json("비밀번호와 확인 비밀번호를 똑같이 입력해주세요");
   }
@@ -33,6 +35,7 @@ exports.signUp = async (req, res) => {
     username: req.body.username,
     password: bcrypt.hashSync(req.body.password, 10),
     nickname: req.body.nickname,
+    companyUrl : req.body.companyUrl,
     admin: false,
   }
   // 4. userInfo에 저장한 값을 데이터베이스에 저장
@@ -70,7 +73,8 @@ exports.adminSignUp = async (req, res) => {
     username: req.body.username,
     password: bcrypt.hashSync(req.body.password, 10),
     nickname: req.body.nickname,
-    admin: true,    
+    companyUrl : "",
+    admin: true,
   }
   // 4. userInfo에 저장한 값을 데이터베이스에 저장
   const createUser = await query.createUser(userInfo);
