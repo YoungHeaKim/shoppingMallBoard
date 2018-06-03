@@ -62,9 +62,6 @@ const router = express.Router();
 // admin만 home으로 가는 부분
 router.get('/', adminRequired, getting.mainPage);
 
-// admin만 들어갈 수 있는 페이지
-router.get('/admin', adminRequired, getting.adminPage);
-
 // 새로운 쇼핑몰 등록하는 부분
 router.get('/shoppingmall/register', csrfProtection, async (req, res) => {
   const user = await query.checkUserBy_id(req.user);
