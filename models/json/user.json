@@ -1,4 +1,7 @@
 {
+  "uuid": {
+    "type": "String"
+  },
   "username": {
     "type": "String",
     "required": [
