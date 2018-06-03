@@ -21,3 +21,19 @@ exports.postComments = async (req, res) => {
     })
   }
 }
+exports.postAnswer = async (req, res) => {
+  // 1. 로그인되어 있는 유저의 정보를 가져옴
+  const token = req.cookies.auth;
+  const decoded = jwt.verify(token, process.env.JWT_SECRET);
+  const user = await query.checkUserBy_id(decoded.id);
+  const CommentInfo = {
+    content : req.body.content,
+    writer : user.id,
+  }
+  const comments = await query.createAnswer({_id : req.params._id }, CommentInfo);
+  const comment = await query.findCommentsBy_id(req.params._id)
+  const article = await query.findArticleById(comment.shoppingMall_id);
+  if (comments) {
+    return res.status(200).redirect('/shoppingmall/:article._id');
+  }
+}
