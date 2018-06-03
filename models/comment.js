@@ -3,10 +3,34 @@ const timestamps = require('mongoose-timestamp');
 const paginate = require('mongoose-paginate');
 const bcrypt = require('bcrypt-nodejs');
 
-const Schema = mongoose.Schema;
+const Schema = require('mongoose').Schema;
 
-const commentsJson = require('./json/comment.json');
-const commentsSchema = Schema(commentsJson);
+const commentsSchema = Schema({
+  content: {
+    type: String
+  },
+  writer: {
+    type: Schema.Types.ObjectId,
+    ref: 'User'
+  },
+  shoppingMall_id:{
+    type: Schema.Types.ObjectId,
+    ref: 'Article'
+  },
+  answer: [{
+    writer: {
+      type: Schema.Types.ObjectId,
+      ref: 'User'
+    },
+    content: {
+      type: String
+    },
+    createdAt: {
+      type: Date,
+      default: Date.now
+    }
+  }]
+});
 
 commentsSchema.plugin(timestamps);
 commentsSchema.plugin(paginate);
