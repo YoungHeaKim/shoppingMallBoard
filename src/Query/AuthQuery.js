@@ -13,6 +13,7 @@ module.exports = {
   },
   createUser(data) {
     return User.create({
+      uuid: data.uuid,
       username: data.username,
       password: data.password,
       nickname: data.nickname,
