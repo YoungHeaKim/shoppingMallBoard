@@ -4,6 +4,9 @@ const express = require('express');
 const query = require('../Query');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
+const uuid = require('node-uuid');
+
+const uuidV4 = uuid.v4();
 
 const router = express.Router();
 
@@ -32,6 +35,7 @@ exports.signUp = async (req, res) => {
 
   // 3. 위의 확인들이 통과하면 그 정보들을 userInfo에 저장
   const userInfo = {
+    uuid : uuidV4,
     username: req.body.username,
     password: bcrypt.hashSync(req.body.password, 10),
     nickname: req.body.nickname,
@@ -42,7 +46,7 @@ exports.signUp = async (req, res) => {
   const createUser = await query.createUser(userInfo);
   if (createUser) {
     console.log('success')
-    return res.status(200).send('<script>alert("환영합니다. 회원가입에 성공하였습니다.");location.href="/shoppingmall/register";</script>')
+    return res.status(200).send('<script>alert("환영합니다. 회원가입에 성공하였습니다.");location.href="/user/login";</script>')
   }
 }
 
@@ -70,6 +74,7 @@ exports.adminSignUp = async (req, res) => {
 
   // 3. 위의 확인들이 통과하면 그 정보들을 userInfo에 저장
   const userInfo = {
+    uuid: uuidV4,
     username: req.body.username,
     password: bcrypt.hashSync(req.body.password, 10),
     nickname: req.body.nickname,
