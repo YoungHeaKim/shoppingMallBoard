@@ -1,23 +1,59 @@
 <% include ../partials/header.ejs %>
+  <h1> 요청사항이 있는 게시글</h1>
+  <table class="table table-bordered table-hover">
+    <tr>
+      <th style="text-align: center">메인사진</th>
+      <th style="text-align: center">제목</th>
+      <th style="text-align: center">작성일</th>
+      <th style="text-align: center">최신 요청사항</th>
+      <th style="text-align: center">요청사항 개수</th>
+    </tr>
+    <% if(adminArticleList == null || adminArticleList.length == 0) { %>
+      <tr>
+        <td colspan=100>요청을 보낸 쇼핑몰이 없습니다.</td>
+      </tr>
+      <% } %>
+      <% adminArticleList.forEach( (articles) => { %>
+        <tr>
+          <td style="text-align: center;">
+            <img src="https://wpsn-younghea-zigzeg.s3.amazonaws.com/<%= articles.article.thumbnail %>" style="width: 70px; height: 70px;">
+          </td>
+          <td style="text-align: center;">
+            <a href="/shoppingmall/<%= articles.article._id %>">
+              <%= articles.writer.nickname %>
+            </a>
+          </td>
+          <td style="text-align: center;">
+            <%= articles.article.getDate.year %> - <%= articles.article.getDate.month %> - <%= articles.article.getDate.day %>
+          </td>
+          <td style="text-align: center;">
+            <%= articles.writer.nickname %> : <%= articles.comments.content %>
+          </td>
+          <td style="text-align: center;"><%= articles.length %></td>
+        </tr>
+      <% }) %>
+  </table>
+
+  <h1>모든 쇼핑몰</h1>
 
   <table class="table table-bordered table-hover">
     <tr>
-      <th>메인사진</th>
-      <th>제목</th>
-      <th>작성일</th>    
+      <th style="text-align: center;">메인사진</th>
+      <th style="text-align: center;">제목</th>
+      <th style="text-align: center;">작성일</th>    
     </tr>
-    <% if(articleList == null || articleList.length == 0) { %>
+    <% if(allArticleList == null || allArticleList.length == 0) { %>
       <tr>
-        <td colspan=100>Article이 없습니다.</td>
+        <td colspan=100 style="text-align: center;">등록된 쇼핑몰이 없습니다.</td>
       </tr>
     <% } %>
-    <% articleList.forEach( (article) => { %>
+    <% allArticleList.forEach( (article) => { %>
       <tr>  
-        <td>
-          <%= article.thumbnail %>
+        <td style="text-align: center">
+          <img src="https://wpsn-younghea-zigzeg.s3.amazonaws.com/<%= article.thumbnail %>" style="width: 70px; height: 70px;">
         </td>
-        <td><a href="/shoppingmall/<%= article._id %>"><%= article.title %></a></td>
-        <td>
+        <td style="text-align: center;"><a href="/shoppingmall/<%= article._id %>"><%= article.title %></a></td>
+        <td style="text-align: center;">
           <%= article.getDate.year %> -
           <%= article.getDate.month %> -
           <%= article.getDate.day %>
@@ -25,5 +61,4 @@
       </tr>
     <% }) %>
   </table>
-
-  <% include ../partials/footer.ejs %>
+<% include ../partials/footer.ejs %>
