@@ -21,6 +21,8 @@ exports.postComments = async (req, res) => {
     })
   }
 }
+
+// 이부분 오류(ajax);
 exports.postAnswer = async (req, res) => {
   // 1. 로그인되어 있는 유저의 정보를 가져옴
   const token = req.cookies.auth;
@@ -30,10 +32,17 @@ exports.postAnswer = async (req, res) => {
     content : req.body.content,
     writer : user.id,
   }
-  const comments = await query.createAnswer({_id : req.params._id }, CommentInfo);
-  const comment = await query.findCommentsBy_id(req.params._id)
-  const article = await query.findArticleById(comment.shoppingMall_id);
+console.log(comment_id);
+
+  const comments = await query.createAnswer({_id : comment_id}, CommentInfo);
+  
+  const comment = await query.findCommentsBy_id(comments._id)
   if (comments) {
-    return res.status(200).redirect('/shoppingmall/:article._id');
+    return res.status(200).json({
+      id: comment.id,
+      content: comment.content,
+      writer: comment.writer,
+      message: "success"
+    });
   }
 }
