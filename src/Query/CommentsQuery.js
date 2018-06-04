@@ -21,21 +21,23 @@ module.exports = {
   deleteCommentFromArticle(data) {
     return Comments.remove({
       shoppingMall_id: data
-    })
+    });
   },
-  findAllCommnets(data) {
-    return Comments.find(data)
+  findAllCommnetsByDate(date) {
+    return Comments.find({
+      createdAt: { $gte: date }
+    }).sort({ createdAt: -1 });
   },
   createAnswer(Id, data) {
     return Comments.update(Id, {
       $push : {
         answer : data
       }
-    })
+    });
   },
   findCommentsBy_id(data) {
     return Comments.findOne({
       _id : data
-    })
+    });
   }
 }
