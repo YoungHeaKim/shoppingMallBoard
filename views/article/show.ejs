@@ -2,11 +2,11 @@
 
 <div class="panel panel-default">
   <div class="panel-heading">
-    <a href='<%= user.companyUrl %>' target="_blank">
-      <%= user.nickname %>
+    <a href='<%= user.companyUrl %>' target="_blank" style="font-size: 1.5em;">
+      <%= article.title.nickname %>
     </a>
     <div style="float: right;">
-       작성일 : 
+       작성일 :
        <% if(article.createdAt === article.updatedAt) { %>
         <%= article.getDate.year %> -
         <%= article.getDate.month %> -
@@ -31,7 +31,7 @@
       <%- article.content %>
     </div>
     <!-- 요청사항 영역  -->
-    
+
     <hr />
     <div>
       <table class="table" id="comment_area">
@@ -39,27 +39,40 @@
           <th>요청 내용</th>
           <th>작성자</th>
           <th>작성일</th>
-          <th>삭제 여부 밑 댓글달기</th>          
+          <th>삭제 여부 밑 댓글달기</th>
         </tr>
         <% if(comments == null || comments.length == 0) { %>
           <tr>
-            <td colspan=100>요청사항이 없습니다.</td>
+            <td colspan=100 style="text-align: center;">요청사항이 없습니다.</td>
           </tr>
         <% } %>
-        <% comments.forEach( function(comment){ %>
+        <% comments.forEach((comment) => { %>
           <tr>
             <td>
               <%= comment.content %>
             </td>
             <td>
-              <%= comment.writer %>
+              <%= comment.writer.nickname %>
             </td>
             <td>
-              <%= comment.getDate.year %> -
-              <%= comment.getDate.month %> -
-              <%= comment.getDate.day %>
+              <%= comment.getDate.year %> - <%= comment.getDate.month %> - <%= comment.getDate.day %>
             </td>
-            <td><a class='comment_delete' comment_id='<%=comment._id%>'>삭제</a>
+            <td>
+              <button type="button" class='comment_delete' comment_id='<%= comment._id%>'>삭제</button>
+              <% if(users.admin === true) { %>
+                및 <button type="button" class="answerBtn">댓글달기</button>
+              <% } %>
+            </td>
+          </tr>
+          <tr id="answer" class="off">
+            <td colspan="4">
+              <div>
+                댓글 작성하기
+                <form id="answerForm" action="" method="post">
+                  <textarea class="form-control" name="content"></textarea>
+                  <button type="submit" class="btn btn-primary addAnswerBtn" style="margin-top: 10px" id="answerButton" comment_id='<%= comment._id%>'>댓글 작성</button>
+                </form>
+              </div>
             </td>
           </tr>
         <% }) %>
@@ -72,7 +85,7 @@
       <form id="commentForm" action="" method="post">
         <input type="hidden" name="shoppingMall_id" value="<%=article._id%>" />
         <textarea class="form-control" name="content"></textarea>
-        <button class="btn btn-primary" style="margin-top: 10px">요청사항 작성</button>
+        <button class="btn btn-primary addCommentBtn" style="margin-top: 10px">요청사항 작성</button>
       </form>
     </div>
     <!-- 요청사항 영역  -->
@@ -80,16 +93,27 @@
   </div>
 
   <a href="/delete/<%= article._id %>" class="btn btn-danger" onclick="return confirm('삭제하시겠습니까?')">삭제</a>
-  <%if(article.title === user._id) { %>
+  <% if(article.title === user._id) { %>
     <a href="/shoppingmall/edit/<%= article._id %>" class="btn btn-primary">수정</a>
   <% } %>
 </div>
 <script type="text/javascript" src="https://code.jquery.com/jquery-2.2.4.min.js"></script>
 
+<style>
+  .off {
+    display: none;
+  }
+</style>
+
 <script>
-  $(document).ready(function () {
-    $('#commentForm').submit(function () {
-      let $contentVal = $(this).children('textarea[name=content]').val();
+  $(function () {
+    $('button.answerBtn').click(
+      function (e) {
+        $("#answer").toggleClass('off');
+      })
+  });
+  $(document).on('click', '.addCommentBtn', function () {
+      let $contentVal = $(this).siblings('textarea[name=content]').val();
       if ($contentVal) {
         $.ajax({
           url: '/shoppingmall/ajax_comment/insert',
@@ -114,6 +138,31 @@
       }
       return false;
     });
+// 이부분 오류( ajax 요청이 다른 곳으로 보내서 요청사항에 대한 댓글을 달수 없는 오류가 발생 )
+    $(document).on('click', '.addAnswerBtn', function () {
+      let $contentVal = $(this).siblings('textarea[name=content]').val();
+      if (!$contentVal) {
+        alert('요청사항을 입력해주세요.');
+        return false;
+      }
+      $.ajax({
+        url: '/shoppingmall/ajax_comment/answer',
+        type: 'POST',
+        data: [$(this).serialize(), { comment_id: $self.attr('comment_id') }],
+      })
+        .done(function (args) {
+          if (args.message === "success") {
+            $('#comment_area').append( '<tr>' + '<td>' + args.content + '</td>' + '<td>' + args.writer + '</td>' + "</tr>" );
+            $('#answerForm textarea[name=content]').val("");
+            window.location.reload()
+          }
+        })
+        .fail(
+          function (args) {
+            console.log(args);
+          }
+        );
+    });
 
     $(document).on('click', '.comment_delete', function () {
       if (confirm('삭제하시겠습니까?')) { //확인창 예 눌렀을 시만 진행
@@ -135,7 +184,6 @@
           });
       }
     });
-  });
 
 </script>
 

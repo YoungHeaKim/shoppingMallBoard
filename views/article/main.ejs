@@ -20,14 +20,14 @@
           </td>
           <td style="text-align: center;">
             <a href="/shoppingmall/<%= articles.article._id %>">
-              <%= articles.writer.nickname %>
+              <%= articles.writer %>
             </a>
           </td>
           <td style="text-align: center;">
             <%= articles.article.getDate.year %> - <%= articles.article.getDate.month %> - <%= articles.article.getDate.day %>
           </td>
           <td style="text-align: center;">
-            <%= articles.writer.nickname %> : <%= articles.comments.content %>
+            <%= articles.writer %> : <%= articles.lastestComments.content %>
           </td>
           <td style="text-align: center;"><%= articles.length %></td>
         </tr>
