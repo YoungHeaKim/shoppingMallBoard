@@ -14,7 +14,7 @@ router.get('/admin/join', (req, res) => {
 
 // 파트너사 회원가입 부분
 router.get('/join', (req, res) => {
-  res.render('login/Register');
+  res.render('login/register');
 })
 
 // admin 회원가입 저장하는 부분
