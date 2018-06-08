@@ -13,7 +13,7 @@ module.exports = {
     })
   },
   findArticleById(data) {
-    return Article.findById(data)
+    return Article.findById(data).populate('title')
   },
   updateTitleAndDescription(Id, data) {
     return Article.findByIdAndUpdate(Id, {
@@ -23,11 +23,11 @@ module.exports = {
     })
   },
   findAllArticle(data) {
-    return Article.find(data);
+    return Article.find(data).populate('title');;
   },
   findArticleByTitle(data) {
     return Article.findOne({
       title : data
-    })
+    }).populate('title');
   }, 
 }

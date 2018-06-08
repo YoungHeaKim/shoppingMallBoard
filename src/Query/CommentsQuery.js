@@ -4,7 +4,7 @@ module.exports = {
   findCommentsByShoppingMall_id(id) {
     return Comments.find({
       shoppingMall_id: id
-    });
+    }).populate('writer').populate('answer');
   },
   createComments(data) {
     return Comments.create({
@@ -23,14 +23,17 @@ module.exports = {
       shoppingMall_id: data
     });
   },
-  findAllCommnetsByDate(date) {
+  findCommnetsByShoppingmall_idAndDate(Id, date) {
     return Comments.find({
-      createdAt: { $gte: date }
+      $and : [
+        { shoppingMall_id : Id}, 
+        { createdAt: { $gte: date } }
+      ]
     }).sort({ createdAt: -1 });
   },
   createAnswer(Id, data) {
     return Comments.update(Id, {
-      $push : {
+      $unshift : {
         answer : data
       }
     });
