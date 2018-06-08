@@ -11,19 +11,30 @@ const uuidV4 = uuid.v4();
 const router = express.Router();
 
 exports.signUp = async (req, res) => {
+  const pwCheck = /^(?=.*[a-zA-Z])(?=.*[!@#$%^*+=-])(?=.*[0-9]).{4,12}$/;
+
   // 1. 입력한 이메일, 비밀번호, 이름, 유저이름, 확인비밀번호가 정확한지 체크
   if (!req.body.username) {
-    return res.status(400).json("username을 입력해주세요");
+    alert("username을 입력해주세요");
+    return res.status(400).json("username을 입력해주세요")
   } else if (!req.body.password) {
+    alert("비밀번호를 입력해주세요");
     return res.status(400).json("비밀번호를 입력해주세요");
   } else if (!req.body.password2) {
+    alert("확인 비밀번호를 입력해주세요");
     return res.status(400).json("확인 비밀번호를 입력해주세요");
   } else if (!req.body.nickname) {
+    alert("회사명을 입력해주세요");
     return res.status(400).json("회사명을 입력해주세요");
   } else if (!req.body.companyUrl) {
+    alert("회사 홈페이지 주소를 입력해주세요")
     return res.status(400).json("회사 홈페이지를 입력해주세요");
   } else if (req.body.password !== req.body.password2) {
+    alert("비밀번호와 확인 비밀번호를 똑같이 입력해주세요");
     return res.status(400).json("비밀번호와 확인 비밀번호를 똑같이 입력해주세요");
+  } else if (pwCheck.test(password) == false) {
+    alert('비밀 번호는 4~12자리 영어와 숫자, 특수문자가 모두 포함되어야 합니다.');
+    return res.status(400).json('비밀 번호는 4~12자리 영어와 숫자, 특수문자가 모두 포함되어야 합니다.');
   }
 
   // 2. 이메일, 유저이름이 하나만 있는지 확인
@@ -52,6 +63,8 @@ exports.signUp = async (req, res) => {
 
 
 exports.adminSignUp = async (req, res) => {
+  const pwCheck = /^(?=.*[a-zA-Z])(?=.*[!@#$%^*+=-])(?=.*[0-9]).{4,12}$/;
+  
   // 1. 입력한 이메일, 비밀번호, 이름, 유저이름, 확인비밀번호가 정확한지 체크
   if (!req.body.username) {
     return res.status(400).json("username을 입력해주세요");
@@ -63,6 +76,9 @@ exports.adminSignUp = async (req, res) => {
     return res.status(400).json("회사명을 입력해주세요");
   } else if (req.body.password !== req.body.password2) {
     return res.status(400).json("비밀번호와 확인 비밀번호를 똑같이 입력해주세요");
+  } else if (pwCheck.test(password) == false) {
+    alert('비밀 번호는 4~12자리 영어와 숫자, 특수문자가 모두 포함되어야 합니다.');
+    return res.status(400).json('비밀 번호는 4~12자리 영어와 숫자, 특수문자가 모두 포함되어야 합니다.');
   }
 
   // 2. 이메일, 유저이름이 하나만 있는지 확인
