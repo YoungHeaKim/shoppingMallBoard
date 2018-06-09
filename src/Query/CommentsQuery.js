@@ -33,7 +33,7 @@ module.exports = {
   },
   createAnswer(Id, data) {
     return Comments.update(Id, {
-      $unshift : {
+      $push : {
         answer : data
       }
     });
