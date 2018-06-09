@@ -3,7 +3,7 @@ const jwt = require('jsonwebtoken');
 const paginate = require('express-paginate');
 
 exports.mainPage = async (req, res) => {
-  const results = await query.findAllArticle().sort('-createdAt').populate('writer');
+  const results = await query.findAllArticle().sort('-createdAt');
   // article writer와 user db에 있는 user의 이름을 articleList라는 배열에 저장하는 부분
   const allArticleList = [];
   for (let idx = 0; idx < results.length; idx++) {
@@ -11,18 +11,17 @@ exports.mainPage = async (req, res) => {
     const user = await query.checkUserBy_id(results[idx].title);
     articleObj._id = results[idx]._id;
     articleObj.thumbnail = results[idx].thumbnail;
-    articleObj.title = user.nickname;
+    articleObj.title = results[idx].title.nickname;
     articleObj.getDate = results[idx].getDate;
     articleObj.updatedDate = results[idx].updatedDate;
     articleObj.createdAt = results[idx].createdAt;
     allArticleList.push(articleObj);
   }
-  // 1주일의 조건을 넣지 못한 오류
-  // const oneWeek = new Date() - 60 * 60 * 1000 * 24 * 7;
-  // const allComments = await query.findAllCommnetsByDate(oneWeek);
+  const oneWeek = new Date() - 60 * 60 * 1000 * 24 * 7;
   const articleHaveComments = [];
   for(let idx = 0; idx < allArticleList.length; idx++) {
-    const Comments = await query.findCommentsByShoppingMall_id(allArticleList[idx]._id).populate('writer');
+    // 일주일안에 요청이 있는 모든 comments를 찾아오는 부분
+    const Comments = await query.findCommnetsByShoppingmall_idAndDate(allArticleList[idx]._id, oneWeek);
     let articleObj = {};
     articleObj.lastestComments = Comments[0];
     articleObj.writer = allArticleList[idx].title;
@@ -50,9 +49,10 @@ exports.articlePage = async (req, res) => {
   const decoded = jwt.verify(token, process.env.JWT_SECRET);
   const users = await query.checkUserBy_id(decoded.id);
   // 2. 원하는 글의 정보를 불러오는 부분
-  const article = await query.findArticleByTitle(users._id).populate('title');
-  const comments = await query.findCommentsByShoppingMall_id(article._id).populate('writer');
-  
+  const article = await query.findArticleByTitle(users._id);
+  // comments에 answer에 writer를 가져오는 부분
+  const comments = await query.findCommentsByShoppingMall_id(article._id).populate('answer.writer');
+
   if (!article) {
     console.log('게시글부분 오류')
     res.status(400).json('게시글이 없습니다.')
@@ -73,17 +73,9 @@ exports.articleAdminPage = async (req, res) => {
   const decoded = jwt.verify(token, process.env.JWT_SECRET);
   const users = await query.checkUserBy_id(decoded.id);
   // 2. 원하는 글의 정보를 불러오는 부분
-  const article = await query.findArticleById(req.params._id).populate("title");
-  const comments = await query.findCommentsByShoppingMall_id(article._id).populate('writer').populate('answer');
-  let answerList = [];
-  for (let idx = 0; idx < comments.length; idx++) {
-    let answerObj = {};
-    answerObj.answer = comments[idx].answer;
-    answerList.push(answerObj);
-  }
-  console.log(answerList[0].answer);
-  
-  
+  const article = await query.findArticleById(req.params._id);
+  const comments = await query.findCommentsByShoppingMall_id(article._id).populate('answer.writer');
+
   if (!article) {
     console.log('게시글부분 오류')
     res.status(400).json('게시글이 없습니다.')
