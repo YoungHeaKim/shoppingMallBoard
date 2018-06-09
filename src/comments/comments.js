@@ -17,6 +17,6 @@ router.post('/shoppingmall/ajax_comment/insert', posting.postComments);
 router.post('/shoppingmall/ajax_comment/delete', deleting.deleteCommnets);
 
 // 답변 등록하는 부분
-router.post('/shoppingmall/ajax_comment/answer', posting.postAnswer);
+router.post('/shoppingmall/comment/answer', posting.postAnswer);
 
 module.exports = router;
